@@ -8,35 +8,24 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SettingsComponent } from './dashboard/settings/settings.component';
 import { ProfileComponent } from './dashboard/profile/profile.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { AuthGuard } from './auth.guard';
 export const routes: Routes = [
-    {path: '',component: HomeComponent},
-    {path: 'about',component: AboutComponent},
-    {path: 'contact',component: ContactComponent},
-    {path:'contact',redirectTo:'about',pathMatch:'full'},
-    {path: 'user/:id',component: UserComponent},
-    ///{
-       /// path: 'dashboard',component: DashboardComponent,children:[
-          // {path:'',redirectTo:'settings',pathMatch:'full'},
-            //{path:'settings',component: SettingsComponent},
-            //{path: 'profile',component:ProfileComponent},
-            
-        //]
-        //Lazy Loading
-        //path: 'dashboard',
-        //loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)
-    ///},
-    { 
+    { path: '', component: HomeComponent },
+    { path: 'about', component: AboutComponent },
+    { path: 'contact', component: ContactComponent },
+    { path: 'user/:id', component: UserComponent },
+    {
         path: 'dashboard',
         loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
+        canActivate: [AuthGuard],
         children: [
-          { path: 'settings', loadComponent: () => import('./dashboard/settings/settings.component').then(m => m.SettingsComponent) },
-          { path: 'profile', loadComponent: () => import('./dashboard/profile/profile.component').then(m => m.ProfileComponent) },
-          { path: '', redirectTo: 'settings', pathMatch: 'full' }
+            { path: 'settings', loadComponent: () => import('./dashboard/settings/settings.component').then(m => m.SettingsComponent) },
+            { path: 'profile', loadComponent: () => import('./dashboard/profile/profile.component').then(m => m.ProfileComponent) },
+            { path: '', redirectTo: 'settings', pathMatch: 'full' }
         ]
-      },
-    {path: '**',component: NotFoundComponent}
-
+    },
+    // Wildcard route to display 404 error page when the path does not match any of the defined routes
+    { path: '**', component: NotFoundComponent }
 ];
 
-export const AppRoutingModule=RouterModule.forRoot(routes);
-
+export const AppRoutingModule = RouterModule.forRoot(routes);
