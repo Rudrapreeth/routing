@@ -1,26 +1,21 @@
+// src/app/auth.guard.ts
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { CanActivate, Router } from '@angular/router';
+import { ClickTrackerService } from './click-tracker.service';
 
-// Example Auth Service (replace with your actual auth logic)
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private router: Router) {}
+  constructor(private clickTracker: ClickTrackerService, private router: Router) {}
 
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    
-    const isAuthenticated = false;  // Add your authentication check logic here
-    
-    if (isAuthenticated) {
-      return true;  // Allow access to the route
+  canActivate(): boolean {
+    if (this.clickTracker.canAccessDashboard()) {
+      return true;
     } else {
-      this.router.navigate(['/']);  // Redirect to home or login page
-      return false;  // Deny access to the route
+      alert(`Access Denied. Click the Dashboard button ${5 - this.clickTracker.getClickCount()} more times.`);
+      return false;
     }
   }
 }
